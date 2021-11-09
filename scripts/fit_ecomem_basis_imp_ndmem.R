@@ -2,20 +2,14 @@ library(rstan)
 library(mgcv)
 library(dplR)
 
+sites = c("WOLF_PIFL_FINAL-std-all.csv", "WOLF_PSME_FINAL-std-all.csv")
 
 N_sites = length(sites)
 
 raw = list()
 for (nsite in 1:N_sites){
   site = sites[nsite]
-  chron = read.crn(paste0('data/chron/', site,  '-', type, '-chron-', detrend_method ,'.crn'))
-
-  chron_df = data.frame(year = rownames(chron), chron = chron[,1], sdepth = chron[,2])
-#  chron_df = chron_df[which(chron_df$sdepth<2),]
-
-  climate = read.csv(paste0('data/raw/', site, '-climate.csv'), header=TRUE)
-
-  raw[[site]] = merge(chron_df, climate, by.x = 'year')
+  raw[[site]] = read.csv(paste0('data/', site), header=TRUE)
 }
 names(raw) = sites
 
@@ -35,7 +29,7 @@ N_years = length(years)
 
 # subset site and fire data to selected years
 for (site in 1:N_sites){ 
- raw[[site]] = raw[[site]][which(raw[[site]]$year %in% years),]
+  raw[[site]] = raw[[site]][which(raw[[site]]$year %in% years),]
 }
 
 ## define data objects
@@ -103,24 +97,6 @@ n_knots = nrow(B)
 #######################################################################################
 ## compile data as a list; save data as RDS object
 #######################################################################################
-
-# dat = list(N_years = N_years,
-#            N_sites = N_sites,
-#            lag = lag,
-#            N_covars = N_covars,
-#            Y = Y,
-#            X = X,
-#            d = d,
-#            B = B,
-#            S_inv = S_inv,
-#            n_basis = n_basis,
-#            n_knots = n_knots,
-#            X_nmiss = X_nmiss,
-#            d_nmiss = d_nmiss,
-#            X_index = X_index,
-#            d_index = d_index,
-#            include_fire = include_fire,
-#            include_outbreak = include_outbreak)
 
 dat = list(N_years = N_years,
            N_sites = N_sites,
